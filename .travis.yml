@@ -8,3 +8,10 @@ jdk:
 
 script:
   - ./gradlew clean testIntegration
+
+after_script:
+  - mkdir reports
+  - cp -R build/reports/* reports
+  - git add reports
+  - git commit -m "Test Reports"
+
