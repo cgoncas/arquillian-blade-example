@@ -17,6 +17,7 @@ ref="heads/gh-pages"
 testReports = ""
 cucumberReports = ""
 coverageReports = ""
+logs = ""
 
 references = repo.split("/");
 
@@ -48,6 +49,22 @@ Dir.glob('**/build/reports/**/*').each do|f|
   end
 end
 
+Dir.glob('**/*.log').each do|f|
+  if not File.directory?(f) then
+    file = File.open(f, "r")
+    content = file.read
+    file.close
+
+    new_contents[reportDir + "/" + f] =  Base64.encode64(content)
+
+    if f.end_with? "index.html" then
+        link = "https://" + user + ".github.io/" + repoName+ "/" + reportDir + "/" + f
+
+        logs = logs + "<li>  " +  "<a href=\""+ link +"\">" + link + "</a></li>\n"
+    end
+  end
+end
+
 new_tree = new_contents.map do |path, new_content|
   Hash(
     path: path,
@@ -62,6 +79,8 @@ sha_latest_commit = client.ref(repo, "heads/gh-pages").object.sha
 commit = client.git_commit(repo, sha_latest_commit)
 
 tree = commit["tree"]
+
+puts "Tree " + tree["sha"]
 
 new_tree = client.create_tree(repo, new_tree, base_tree: tree["sha"])
 
@@ -78,6 +97,7 @@ pullMessage = "<html>\n" +
 "<details><summary><b> Test Reports </b></summary>\n" + testReports + "</details>\n" +
 "<details><summary><b> Functional Test Reports </b></summary>\n" + cucumberReports + "</details>\n" +
 "<details><summary><b> Coverage Reports </b></summary>\n" + coverageReports + "</details>\n" +
+"<details><summary><b> Logs </b></summary>\n" + logs + "</details>\n" +
 "</html>"
 
 puts ColorizedString[pullMessage].colorize(:color => :blue)

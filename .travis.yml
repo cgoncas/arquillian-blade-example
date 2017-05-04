@@ -16,8 +16,8 @@ script:
 
 after_script:
   - ruby ./scripts/publish-gh-pages.rb
+  - cat liferay/liferay-ce-portal-7.0-ga3/tomcat-8.0.32/catalina.out
 
 cache:
   directories:
-  - liferay
-  - $HOME/.m2
+    - $HOME/.m2

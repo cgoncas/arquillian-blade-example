@@ -72,6 +72,8 @@ public class BasicPortletFunctionalTest {
 
 		_browser.get(_portlerURL.toExternalForm());
 
+		System.out.println("SOURCE " + _browser.getPageSource());
+
 		_firstParameter.clear();
 
 		_firstParameter.sendKeys("2");
